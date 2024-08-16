@@ -123,6 +123,7 @@ with the apiserver API to configure the proxy.`,
 			}
 			// add feature enablement metrics
 			utilfeature.DefaultMutableFeatureGate.AddMetrics()
+			// ymfx -1.2
 			if err := opts.Run(context.Background()); err != nil {
 				opts.logger.Error(err, "Error running ProxyServer")
 				return err
@@ -537,6 +538,7 @@ func (s *ProxyServer) Run(ctx context.Context) error {
 	// Note: RegisterHandler() calls need to happen before creation of Sources because sources
 	// only notify on changes, and the initial update (on process start) may be lost if no handlers
 	// are registered yet.
+	// ymfx -1
 	serviceConfig := config.NewServiceConfig(ctx, informerFactory.Core().V1().Services(), s.Config.ConfigSyncPeriod.Duration)
 	serviceConfig.RegisterEventHandler(s.Proxier)
 	go serviceConfig.Run(ctx.Done())
@@ -552,8 +554,10 @@ func (s *ProxyServer) Run(ctx context.Context) error {
 	}
 	// This has to start after the calls to NewServiceConfig because that
 	// function must configure its shared informer event handlers first.
+	// ymfx -0.9
 	informerFactory.Start(wait.NeverStop)
 
+	// ymfx -0.8
 	// Make an informer that selects for our nodename.
 	currentNodeInformerFactory := informers.NewSharedInformerFactoryWithOptions(s.Client, s.Config.ConfigSyncPeriod.Duration,
 		informers.WithTweakListOptions(func(options *metav1.ListOptions) {
@@ -575,6 +579,7 @@ func (s *ProxyServer) Run(ctx context.Context) error {
 
 	// This has to start after the calls to NewNodeConfig because that must
 	// configure the shared informer event handler first.
+	// ymfx -0.7
 	currentNodeInformerFactory.Start(wait.NeverStop)
 
 	// Birth Cry after the birth is successful

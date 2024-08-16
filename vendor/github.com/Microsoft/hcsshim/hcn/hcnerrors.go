@@ -10,7 +10,6 @@ import (
 	"github.com/Microsoft/hcsshim/internal/hcserror"
 	"github.com/Microsoft/hcsshim/internal/interop"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/sys/windows"
 )
 
 var (
@@ -51,7 +50,6 @@ type ErrorCode uint32
 const (
 	ERROR_NOT_FOUND                     = 0x490
 	HCN_E_PORT_ALREADY_EXISTS ErrorCode = 0x803b0013
-	HCN_E_NOTIMPL             ErrorCode = ErrorCode(windows.E_NOTIMPL)
 )
 
 type HcnError struct {
@@ -77,10 +75,6 @@ func IsElementNotFoundError(err error) bool {
 
 func IsPortAlreadyExistsError(err error) bool {
 	return CheckErrorWithCode(err, HCN_E_PORT_ALREADY_EXISTS)
-}
-
-func IsNotImplemented(err error) bool {
-	return CheckErrorWithCode(err, HCN_E_NOTIMPL)
 }
 
 func new(hr error, title string, rest string) error {

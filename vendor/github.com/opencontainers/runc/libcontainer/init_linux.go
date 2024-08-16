@@ -10,7 +10,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"syscall"
 	"unsafe"
 
 	"github.com/containerd/console"
@@ -85,11 +84,6 @@ func newContainerInit(t initType, pipe *os.File, consoleSocket *os.File, fifoFd,
 	if err := populateProcessEnvironment(config.Env); err != nil {
 		return nil, err
 	}
-
-	// Clean the RLIMIT_NOFILE cache in go runtime.
-	// Issue: https://github.com/opencontainers/runc/issues/4195
-	maybeClearRlimitNofileCache(config.Rlimits)
-
 	switch t {
 	case initSetns:
 		// mountFds must be nil in this case. We don't mount while doing runc exec.
@@ -267,6 +261,7 @@ func setupConsole(socket *os.File, config *initConfig, mount bool) error {
 			Height: config.ConsoleHeight,
 			Width:  config.ConsoleWidth,
 		})
+
 		if err != nil {
 			return err
 		}
@@ -521,18 +516,6 @@ func setupRoute(config *configs.Config) error {
 		}
 	}
 	return nil
-}
-
-func maybeClearRlimitNofileCache(limits []configs.Rlimit) {
-	for _, rlimit := range limits {
-		if rlimit.Type == syscall.RLIMIT_NOFILE {
-			system.ClearRlimitNofileCache(&syscall.Rlimit{
-				Cur: rlimit.Soft,
-				Max: rlimit.Hard,
-			})
-			return
-		}
-	}
 }
 
 func setupRlimits(limits []configs.Rlimit, pid int) error {
