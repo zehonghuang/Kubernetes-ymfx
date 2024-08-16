@@ -325,6 +325,7 @@ func NewProxier(ctx context.Context,
 	// We pass syncPeriod to ipt.Monitor, which will call us only if it needs to.
 	// We need to pass *some* maxInterval to NewBoundedFrequencyRunner anyway though.
 	// time.Hour is arbitrary.
+	// ymfx 0 定时任务执行
 	proxier.syncRunner = async.NewBoundedFrequencyRunner("sync-runner", proxier.syncProxyRules, minSyncPeriod, time.Hour, burstSyncs)
 
 	go ipt.Monitor(kubeProxyCanaryChain, []utiliptables.Table{utiliptables.TableMangle, utiliptables.TableNAT, utiliptables.TableFilter},
@@ -558,13 +559,16 @@ func (proxier *Proxier) isInitialized() bool {
 // OnServiceAdd is called whenever creation of new service object
 // is observed.
 func (proxier *Proxier) OnServiceAdd(service *v1.Service) {
+	// ymfx 1-1 ServiceAdd
 	proxier.OnServiceUpdate(nil, service)
 }
 
 // OnServiceUpdate is called whenever modification of an existing
 // service object is observed.
 func (proxier *Proxier) OnServiceUpdate(oldService, service *v1.Service) {
+	// ymfx 1-3 ServiceUpdate 更新ServiceChangeTracker的item
 	if proxier.serviceChanges.Update(oldService, service) && proxier.isInitialized() {
+		// ymfx 1-3.5 调用syncProxyRules
 		proxier.Sync()
 	}
 }
@@ -572,6 +576,7 @@ func (proxier *Proxier) OnServiceUpdate(oldService, service *v1.Service) {
 // OnServiceDelete is called whenever deletion of an existing service
 // object is observed.
 func (proxier *Proxier) OnServiceDelete(service *v1.Service) {
+	// ymfx 1-2 ServiceDelete
 	proxier.OnServiceUpdate(service, nil)
 
 }
@@ -584,6 +589,7 @@ func (proxier *Proxier) OnServiceSynced() {
 	proxier.setInitialized(proxier.endpointSlicesSynced)
 	proxier.mu.Unlock()
 
+	// ymfx -9.8
 	// Sync unconditionally - this is called once per lifetime.
 	proxier.syncProxyRules()
 }

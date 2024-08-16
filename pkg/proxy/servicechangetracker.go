@@ -76,6 +76,7 @@ func NewServiceChangeTracker(makeServiceInfo makeServicePortFunc, ipFamily v1.IP
 // contains changes that need to be synced (whether or not those changes were caused by
 // this update); note that this is different from the return value of
 // EndpointChangeTracker.EndpointSliceUpdate().
+// ymfx ServiceChangeTracker.Update 1-4
 func (sct *ServiceChangeTracker) Update(previous, current *v1.Service) bool {
 	// This is unexpected, we should return false directly.
 	if previous == nil && current == nil {

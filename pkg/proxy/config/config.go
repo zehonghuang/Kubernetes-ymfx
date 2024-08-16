@@ -196,6 +196,7 @@ func (c *ServiceConfig) RegisterEventHandler(handler ServiceHandler) {
 func (c *ServiceConfig) Run(stopCh <-chan struct{}) {
 	c.logger.Info("Starting service config controller")
 
+	// ymfx -9.9
 	if !cache.WaitForNamedCacheSync("service config", stopCh, c.listerSynced) {
 		return
 	}
