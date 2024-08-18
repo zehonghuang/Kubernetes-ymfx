@@ -75,6 +75,7 @@ func NewEndpointsChangeTracker(hostname string, makeEndpointInfo makeEndpointFun
 // endpointSlice (depending on removeSlice). It returns true if this update contained a
 // change that needs to be synced; note that this is different from the return value of
 // ServiceChangeTracker.Update().
+// ymfx 2-3 EndpointSliceUpdate
 func (ect *EndpointsChangeTracker) EndpointSliceUpdate(endpointSlice *discovery.EndpointSlice, removeSlice bool) bool {
 	if !supportedEndpointSliceAddressTypes.Has(endpointSlice.AddressType) {
 		klog.V(4).InfoS("EndpointSlice address type not supported by kube-proxy", "addressType", endpointSlice.AddressType)

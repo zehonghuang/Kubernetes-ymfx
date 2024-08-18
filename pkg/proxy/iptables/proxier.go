@@ -597,6 +597,7 @@ func (proxier *Proxier) OnServiceSynced() {
 // OnEndpointSliceAdd is called whenever creation of a new endpoint slice object
 // is observed.
 func (proxier *Proxier) OnEndpointSliceAdd(endpointSlice *discovery.EndpointSlice) {
+	// ymfx 2-1 OnEndpointSliceAdd
 	if proxier.endpointsChanges.EndpointSliceUpdate(endpointSlice, false) && proxier.isInitialized() {
 		proxier.Sync()
 	}
@@ -605,6 +606,7 @@ func (proxier *Proxier) OnEndpointSliceAdd(endpointSlice *discovery.EndpointSlic
 // OnEndpointSliceUpdate is called whenever modification of an existing endpoint
 // slice object is observed.
 func (proxier *Proxier) OnEndpointSliceUpdate(_, endpointSlice *discovery.EndpointSlice) {
+	// ymfx 2-2 OnEndpointSliceUpdate
 	if proxier.endpointsChanges.EndpointSliceUpdate(endpointSlice, false) && proxier.isInitialized() {
 		proxier.Sync()
 	}
@@ -613,6 +615,7 @@ func (proxier *Proxier) OnEndpointSliceUpdate(_, endpointSlice *discovery.Endpoi
 // OnEndpointSliceDelete is called whenever deletion of an existing endpoint slice
 // object is observed.
 func (proxier *Proxier) OnEndpointSliceDelete(endpointSlice *discovery.EndpointSlice) {
+	// ymfx 2-3 OnEndpointSliceDelete
 	if proxier.endpointsChanges.EndpointSliceUpdate(endpointSlice, true) && proxier.isInitialized() {
 		proxier.Sync()
 	}
